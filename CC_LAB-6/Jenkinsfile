@@ -23,13 +23,18 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f nginx-lb || true
-                
+
+                # Start Nginx
                 docker run -d \
                   --name nginx-lb \
                   --network app-network \
                   -p 80:80 \
                   nginx
-                
+
+                # WAITING FOR NGINX TO START
+                sleep 10
+
+                # Copy config and reload
                 docker cp CC_LAB-6/nginx/default.conf nginx-lb:/etc/nginx/conf.d/default.conf
                 docker exec nginx-lb nginx -s reload
                 '''
